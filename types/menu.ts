@@ -1,3 +1,7 @@
+export type HomeResponse = {
+  id: number;
+};
+
 export type Menu = {
   id: number;
   title: string;

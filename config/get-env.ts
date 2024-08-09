@@ -1,5 +1,5 @@
 type EnvVariables = {
-  readonly NODE_ENV: "development" | "test";
+  readonly NODE_ENV: "development";
   readonly NEXT_PUBLIC_REST_API_ENDPOINT: string;
   readonly TOKEN_SECRET: string;
 };

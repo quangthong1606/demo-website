@@ -1,18 +1,17 @@
+"use client";
 import ScrollUp from "@/components/Common/ScrollUp";
 import Hero from "@/components/Hero";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Free Next.js Template for Startup and SaaS",
-  description: "This is Home for Startup Nextjs Template",
-  // other metadata
-};
+import { useGetDataHomePage } from "@/rest/home";
 
 export default function Home() {
-  return (
-    <>
-      <ScrollUp />
-      <Hero />
-    </>
-  );
+  const {
+    data: data,
+    isPending: isPendingOrders,
+    isError: isErrorOrders,
+  } = useGetDataHomePage();
+
+  console.log(data);
+
+  return <>dasds</>;
 }
