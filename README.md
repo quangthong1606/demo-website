@@ -1,14 +1,14 @@
 # Demo Website
 
--- Run proect
+-- Run project
 
-run: npm install
-run: npm run dev
+- run: npm install
+- run: npm run dev
 
 or
 
-run: yarn install
-run: yarn run dev
+- run: yarn install
+- run: yarn run dev
 
 # Description
 
