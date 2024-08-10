@@ -22,22 +22,22 @@ export const createDefaultElements = () => {
       x: 0,
       y: 0,
     },
-    {
-      id: 3,
-      name: "Upload Image",
-      content: "",
-      x: 0,
-      y: 0,
-      height: 250,
-      width: 250,
-    },
-    {
-      id: 4,
-      name: "Text Editor",
-      content: "",
-      x: 0,
-      y: 0,
-    },
+    // {
+    //   id: 3,
+    //   name: "Upload Image",
+    //   content: "",
+    //   x: 0,
+    //   y: 0,
+    //   height: 250,
+    //   width: 250,
+    // },
+    // {
+    //   id: 4,
+    //   name: "Text Editor",
+    //   content: "",
+    //   x: 0,
+    //   y: 0,
+    // },
   ];
 
   return elements;

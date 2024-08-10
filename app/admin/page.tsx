@@ -85,6 +85,10 @@ export default function HomeAdmin() {
     setElementUpdate(elementAsign[index]);
   };
 
+  const openAlert = (alert) => {
+    message.success(alert);
+  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -114,7 +118,6 @@ export default function HomeAdmin() {
   //Upload image
   const handleSubmitImage = (data: ArrayBuffer | string) => {
     elementAsign[indexElementUpdate].content = data;
-    console.log(elementAsign);
     updateElementApply(elementAsign);
     message.success(`Image uploaded successfully 🎉`);
     setIsModalOpen(false);
@@ -163,7 +166,6 @@ export default function HomeAdmin() {
 
   //Update Editor
   const updateEditor = (data: { content: string }) => {
-    console.log(elementAsign[indexElementUpdate], data);
     elementAsign[indexElementUpdate].content = data.content;
     updateElementApply(elementAsign);
     message.success(`Update information successfully 🎉`);
@@ -262,7 +264,9 @@ export default function HomeAdmin() {
                         )}
                         {element.name === "Button" && (
                           <div className="text-center">
-                            <Button>{element.content}</Button>
+                            <Button onClick={() => openAlert(element.alert)}>
+                              {element.content}
+                            </Button>
                           </div>
                         )}
                         {element.name === "Upload Image" && (
