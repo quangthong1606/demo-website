@@ -38,7 +38,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="relative m-auto max-w-6xl border-4 border-solid border-indigo-500 bg-white">
+      <div className="relative m-auto h-screen max-w-6xl border-4 border-solid border-indigo-500 bg-white">
         <div style={{ width: "1000px", height: "500px" }}></div>
         {data &&
           data.length > 0 &&

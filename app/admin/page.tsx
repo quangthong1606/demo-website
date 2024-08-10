@@ -1,6 +1,5 @@
 "use client";
 
-import { useGetDataHomePage } from "@/rest/home";
 import {
   getElementAsign,
   updateElementAsign,
@@ -16,6 +15,7 @@ import Draggable from "react-draggable";
 import { Button, Modal, Input, Form } from "antd";
 import type { FormProps } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import UploadImage from "@/components/UploadImage";
 
 export default function HomeAdmin() {
   const myElementRef = useRef(null);
@@ -64,10 +64,6 @@ export default function HomeAdmin() {
     setElementUpdate(elementAsign[index]);
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -94,6 +90,8 @@ export default function HomeAdmin() {
     console.log("Failed:", errorInfo);
   };
 
+  //Upload image
+
   return (
     <>
       <div className="m-auto h-screen max-w-6xl" ref={myElementRef}>
@@ -108,9 +106,30 @@ export default function HomeAdmin() {
               Update
             </Button>
           </div>
+          <div>
+            <Button type="dashed" className="text-white">
+              Undo
+            </Button>
+          </div>
+          <div>
+            <Button type="dashed" className="text-white">
+              Redo
+            </Button>
+          </div>
+          <div>
+            <Button type="dashed" className="text-white">
+              Export
+            </Button>
+          </div>
+          <div>
+            <Button type="dashed" className="text-white">
+              Import
+            </Button>
+          </div>
         </div>
         <div className="flex gap-10">
           <div className="h-screen w-1/4">
+            <div className="pb-3 text-center">Component UI</div>
             <div className="flex-col">
               {elements.length > 0 &&
                 elements.map((element, index) => (
@@ -128,7 +147,7 @@ export default function HomeAdmin() {
             </div>
           </div>
           <div className="relative border-4 border-solid border-indigo-500">
-            <div style={{ width: "1000px", height: "500px" }}></div>
+            <div style={{ width: "1150px", height: "500px" }}></div>
             {elementsApply &&
               elementsApply.length > 0 &&
               elementsApply.map((element, index) => (
@@ -195,13 +214,17 @@ export default function HomeAdmin() {
               onFinishFailed={onFinishFailed}
               autoComplete="off"
             >
-              <Form.Item<FieldType>
-                label="Content"
-                name="content"
-                rules={[{ required: true, message: "Please input your text!" }]}
-              >
-                <Input />
-              </Form.Item>
+              {elementUpdate && elementUpdate.name !== "Upload Image" && (
+                <Form.Item<FieldType>
+                  label="Content"
+                  name="content"
+                  rules={[
+                    { required: true, message: "Please input your text!" },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+              )}
 
               {elementUpdate && elementUpdate.name === "Button" && (
                 <Form.Item<FieldType>
@@ -214,7 +237,9 @@ export default function HomeAdmin() {
                   <Input />
                 </Form.Item>
               )}
-
+              {elementUpdate && elementUpdate.name === "Upload Image" && (
+                <UploadImage></UploadImage>
+              )}
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="default" htmlType="submit">
                   Submit

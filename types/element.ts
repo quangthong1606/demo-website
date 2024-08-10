@@ -5,4 +5,6 @@ export type Element = {
   alert?: string;
   x: number;
   y: number;
+  height?: number;
+  width?: number;
 };
