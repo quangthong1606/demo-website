@@ -21,6 +21,7 @@ import { Button, Modal, Input, Form, message } from "antd";
 import type { FormProps } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import UploadImage from "@/components/UploadImage";
+import Editor from "@/components/Ckeditor";
 
 export default function HomeAdmin() {
   const myElementRef = useRef(null);
@@ -160,6 +161,15 @@ export default function HomeAdmin() {
     updateElementApply(elementsApplyRedo);
   };
 
+  //Update Editor
+  const updateEditor = (data: { content: string }) => {
+    console.log(elementAsign[indexElementUpdate], data);
+    elementAsign[indexElementUpdate].content = data.content;
+    updateElementApply(elementAsign);
+    message.success(`Update information successfully 🎉`);
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <div className="m-auto h-screen max-w-6xl" ref={myElementRef}>
@@ -207,7 +217,7 @@ export default function HomeAdmin() {
                 ))}
             </div>
           </div>
-          <div className="relative border-4 border-solid border-indigo-500">
+          <div className="relative border-4 border-solid border-indigo-500 bg-white">
             <div style={{ width: "1150px", height: "500px" }}></div>
             {elementsApply &&
               elementsApply.length > 0 &&
@@ -244,7 +254,11 @@ export default function HomeAdmin() {
                       </div>
                       <div className="pt-3">
                         {element.name === "Paragraph" && (
-                          <p className="px-2">{element.content}</p>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: element.content,
+                            }}
+                          />
                         )}
                         {element.name === "Button" && (
                           <div className="text-center">
@@ -281,7 +295,10 @@ export default function HomeAdmin() {
                 onEmit={handleSubmitImage}
               ></UploadImage>
             )}
-            {elementUpdate && elementUpdate.name !== "Upload Image" && (
+            {elementUpdate && elementUpdate.name === "Paragraph" && (
+              <Editor onEmit={updateEditor}></Editor>
+            )}
+            {elementUpdate && elementUpdate.name === "Button" && (
               <Form
                 form={form}
                 name="basic"
@@ -293,32 +310,33 @@ export default function HomeAdmin() {
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
-                <Form.Item<FieldType>
-                  label="Content"
-                  name="content"
-                  rules={[
-                    { required: true, message: "Please input your text!" },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-
                 {elementUpdate && elementUpdate.name === "Button" && (
-                  <Form.Item<FieldType>
-                    label="Alert"
-                    name="alert"
-                    rules={[
-                      { required: true, message: "Please input your alert!" },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
+                  <div>
+                    <Form.Item<FieldType>
+                      label="Content"
+                      name="content"
+                      rules={[
+                        { required: true, message: "Please input your text!" },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                      label="Alert"
+                      name="alert"
+                      rules={[
+                        { required: true, message: "Please input your alert!" },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                      <Button type="default" htmlType="submit">
+                        Submit
+                      </Button>
+                    </Form.Item>
+                  </div>
                 )}
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="default" htmlType="submit">
-                    Submit
-                  </Button>
-                </Form.Item>
               </Form>
             )}
           </Modal>

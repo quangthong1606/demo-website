@@ -53,7 +53,9 @@ export default function Home() {
                 <div>
                   <div className="pt-3">
                     {element.name === "Paragraph" && (
-                      <p className="px-2">{element.content}</p>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: element.content }}
+                      />
                     )}
                     {element.name === "Button" && (
                       <div className="text-center">
