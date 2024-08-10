@@ -2,17 +2,22 @@
 
 import {
   getElementAsign,
+  getElementAsignUndo,
+  getElementAsignRedo,
   updateElementAsign,
+  updateElementAsignUndo,
+  updateElementAsignRedo,
   createDefaultElements,
 } from "@/service/ElementService";
 import { Element } from "@/types/element";
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 
 //tool
 import Draggable from "react-draggable";
 
 //conponent
-import { Button, Modal, Input, Form } from "antd";
+import { Button, Modal, Input, Form, message } from "antd";
 import type { FormProps } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import UploadImage from "@/components/UploadImage";
@@ -25,7 +30,11 @@ export default function HomeAdmin() {
 
   // function
   let elementAsign: Element[] = getElementAsign();
+  let elementAsignUndo: Element[] = getElementAsignUndo();
+  let elementAsignRedo: Element[] = getElementAsignRedo();
   const [elementsApply, setElementsApply] = useState([]);
+  const [elementsApplyUndo, setElementsApplyUndo] = useState([]);
+  const [elementsApplyRedo, setElementsApplyRedo] = useState([]);
   const [elementUpdate, setElementUpdate] = useState<Element>(null);
   const [indexElementUpdate, setIndexElementUpdate] = useState(null);
 
@@ -34,6 +43,14 @@ export default function HomeAdmin() {
   }, 100);
 
   const handleClick = (element) => {
+    elementAsignRedo = elementAsign;
+    setElementsApplyRedo(elementAsignRedo);
+    updateElementAsignRedo(elementAsignRedo);
+    if (elementAsign.length > 0) {
+      elementAsignUndo = elementsApply;
+      setElementsApplyUndo(elementAsignUndo);
+      updateElementAsignUndo(elementAsignUndo);
+    }
     elementAsign.push(element);
     updateElementApply(elementAsign);
   };
@@ -48,6 +65,9 @@ export default function HomeAdmin() {
     elementAsign[index].x = data.x;
     elementAsign[index].y = data.y;
     updateElementApply(elementAsign);
+    elementAsignRedo = elementAsign;
+    setElementsApplyRedo(elementAsignRedo);
+    updateElementAsignRedo(elementAsignRedo);
   };
 
   const updateElementApply = (elementAsign) => {
@@ -91,40 +111,81 @@ export default function HomeAdmin() {
   };
 
   //Upload image
+  const handleSubmitImage = (data: ArrayBuffer | string) => {
+    elementAsign[indexElementUpdate].content = data;
+    console.log(elementAsign);
+    updateElementApply(elementAsign);
+    message.success(`Image uploaded successfully 🎉`);
+    setIsModalOpen(false);
+    form.resetFields();
+  };
+
+  //export Data
+  const exportData = () => {
+    const textData = JSON.stringify(elementAsign);
+    const blob = new Blob([textData], { type: "text/plain;charset=utf-8" });
+
+    // Save the Blob as a file
+    const fileName = "my-file.txt";
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+  };
+
+  //import Data
+  let fileRef = useRef();
+
+  const readFile = (event) => {
+    const fileReader = new FileReader();
+    const { files } = event.target;
+
+    fileReader.readAsText(files[0], "UTF-8");
+    fileReader.onload = (e) => {
+      const content = e.target.result.toString();
+      elementAsign = JSON.parse(content);
+      updateElementApply(elementAsign);
+    };
+  };
+
+  //Undo
+  const undo = () => {
+    console.log(elementsApplyUndo);
+    updateElementApply(elementsApplyUndo);
+  };
+
+  //Redo
+  const redo = () => {
+    console.log(elementsApplyRedo);
+    updateElementApply(elementsApplyRedo);
+  };
 
   return (
     <>
       <div className="m-auto h-screen max-w-6xl" ref={myElementRef}>
         <div className="m-10 flex gap-4">
           <div>
-            <Button type="dashed" className="text-white">
-              Save
+            <Button type="dashed" className="text-white" onClick={() => undo()}>
+              --Undo
             </Button>
           </div>
           <div>
-            <Button type="dashed" className="text-white">
-              Update
+            <Button type="dashed" className="text-white" onClick={() => redo()}>
+              Redo--
             </Button>
           </div>
           <div>
-            <Button type="dashed" className="text-white">
-              Undo
-            </Button>
-          </div>
-          <div>
-            <Button type="dashed" className="text-white">
-              Redo
-            </Button>
-          </div>
-          <div>
-            <Button type="dashed" className="text-white">
+            <Button
+              type="dashed"
+              className="text-white"
+              onClick={() => exportData()}
+            >
               Export
             </Button>
           </div>
           <div>
-            <Button type="dashed" className="text-white">
-              Import
-            </Button>
+            Import Data
+            <Input ref={fileRef} type="file" onChange={readFile} />
           </div>
         </div>
         <div className="flex gap-10">
@@ -190,6 +251,16 @@ export default function HomeAdmin() {
                             <Button>{element.content}</Button>
                           </div>
                         )}
+                        {element.name === "Upload Image" && (
+                          <div className="text-center">
+                            <Image
+                              src={element.content}
+                              alt={element.name}
+                              width={element.width}
+                              height={element.height}
+                            ></Image>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -203,18 +274,25 @@ export default function HomeAdmin() {
             onCancel={handleCancel}
             footer={null}
           >
-            <Form
-              form={form}
-              name="basic"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              style={{ maxWidth: 600 }}
-              initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
-            >
-              {elementUpdate && elementUpdate.name !== "Upload Image" && (
+            {elementUpdate && elementUpdate.name === "Upload Image" && (
+              <UploadImage
+                elementNeedUpdate={elementUpdate}
+                indexElementUpdate={indexElementUpdate}
+                onEmit={handleSubmitImage}
+              ></UploadImage>
+            )}
+            {elementUpdate && elementUpdate.name !== "Upload Image" && (
+              <Form
+                form={form}
+                name="basic"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                style={{ maxWidth: 600 }}
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                autoComplete="off"
+              >
                 <Form.Item<FieldType>
                   label="Content"
                   name="content"
@@ -224,31 +302,31 @@ export default function HomeAdmin() {
                 >
                   <Input />
                 </Form.Item>
-              )}
 
-              {elementUpdate && elementUpdate.name === "Button" && (
-                <Form.Item<FieldType>
-                  label="Alert"
-                  name="alert"
-                  rules={[
-                    { required: true, message: "Please input your alert!" },
-                  ]}
-                >
-                  <Input />
+                {elementUpdate && elementUpdate.name === "Button" && (
+                  <Form.Item<FieldType>
+                    label="Alert"
+                    name="alert"
+                    rules={[
+                      { required: true, message: "Please input your alert!" },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                )}
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button type="default" htmlType="submit">
+                    Submit
+                  </Button>
                 </Form.Item>
-              )}
-              {elementUpdate && elementUpdate.name === "Upload Image" && (
-                <UploadImage></UploadImage>
-              )}
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="default" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
+              </Form>
+            )}
           </Modal>
         </div>
       </div>
     </>
   );
+}
+function saveAs(blob: Blob, arg1: string) {
+  throw new Error("Function not implemented.");
 }

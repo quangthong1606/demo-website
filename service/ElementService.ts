@@ -1,4 +1,6 @@
 const ELEMENTS_ASIGN = "element_asign";
+const ELEMENTS_ASIGN_UNDO = "element_asign_undo";
+const ELEMENTS_ASIGN_REDO = "element_asign_redo";
 import { Element } from "@/types/element";
 
 import Cookies from "js-cookie";
@@ -48,6 +50,42 @@ export const getElementAsign = (): [] => {
     return elementAsign;
   }
   return [];
+};
+
+export const getElementAsignUndo = (): [] => {
+  if (typeof window !== "undefined") {
+    const item = Cookies.get(ELEMENTS_ASIGN_UNDO);
+    const elementAsign = item ? JSON.parse(item) : [];
+    return elementAsign;
+  }
+  return [];
+};
+
+export const updateElementAsignUndo = (data: Element[]) => {
+  if (typeof window !== "undefined") {
+    const jsonValue = JSON.stringify(data);
+    Cookies.set(ELEMENTS_ASIGN_UNDO, jsonValue, {
+      expires: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    });
+  }
+};
+
+export const getElementAsignRedo = (): [] => {
+  if (typeof window !== "undefined") {
+    const item = Cookies.get(ELEMENTS_ASIGN_REDO);
+    const elementAsign = item ? JSON.parse(item) : [];
+    return elementAsign;
+  }
+  return [];
+};
+
+export const updateElementAsignRedo = (data: Element[]) => {
+  if (typeof window !== "undefined") {
+    const jsonValue = JSON.stringify(data);
+    Cookies.set(ELEMENTS_ASIGN_REDO, jsonValue, {
+      expires: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+    });
+  }
 };
 
 export const updateElementAsign = (data: Element[]) => {
