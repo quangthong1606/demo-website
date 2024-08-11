@@ -1,6 +1,5 @@
 "use client";
 import { useGetDataHomePage } from "@/rest/home";
-import { useState } from "react";
 
 //components
 import { Button, message, Popconfirm } from "antd";
@@ -14,23 +13,6 @@ export default function Home() {
     isPending: isPendingOrders,
     isError: isErrorOrders,
   } = useGetDataHomePage();
-
-  const [open, setOpen] = useState(false);
-  const [condition, setCondition] = useState(true);
-
-  const changeCondition = (checked: boolean) => {
-    setCondition(checked);
-  };
-
-  const confirm = () => {
-    setOpen(false);
-    message.success("Next step.");
-  };
-
-  const cancel = () => {
-    setOpen(false);
-    message.error("Click on cancel.");
-  };
 
   const alert = (alert) => {
     message.success(alert);
@@ -59,19 +41,9 @@ export default function Home() {
                     )}
                     {element.name === "Button" && (
                       <div className="text-center">
-                        <Popconfirm
-                          title="Delete the task"
-                          description="Are you sure to delete this task?"
-                          open={open}
-                          onConfirm={confirm}
-                          onCancel={cancel}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button danger onClick={() => alert(element.alert)}>
-                            {element.content}
-                          </Button>
-                        </Popconfirm>
+                        <Button danger onClick={() => alert(element.alert)}>
+                          {element.content}
+                        </Button>
                       </div>
                     )}
                   </div>
