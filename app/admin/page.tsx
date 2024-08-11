@@ -12,6 +12,7 @@ import {
 import { Element } from "@/types/element";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 //tool
 import Draggable from "react-draggable";
@@ -199,7 +200,17 @@ export default function HomeAdmin() {
             Import Data
             <Input ref={fileRef} type="file" onChange={readFile} />
           </div>
+          <div className="ml-10">
+            <Link
+              href="/"
+              target="_blank"
+              className="border-2 border-solid border-orange-400 p-3"
+            >
+              View detail
+            </Link>
+          </div>
         </div>
+
         <div className="flex gap-10">
           <div className="h-screen w-1/4">
             <div className="pb-3 text-center">Component UI</div>
